@@ -172,36 +172,178 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================
-     5. FLOATING HEARTS
+     5. ADVANCED SVG HEARTS
      ========================================================== */
+  const heartGradients = [
+    { id: 'rose',   stops: ['#e88ca5', '#b76e79', '#8b4557'] },
+    { id: 'gold',   stops: ['#f5d78e', '#d4a855', '#c4913a'] },
+    { id: 'pink',   stops: ['#f7c5c5', '#e8a0a0', '#d47e8e'] },
+    { id: 'blush',  stops: ['#f2d1d1', '#d4a0a7', '#b76e79'] },
+    { id: 'sunset', stops: ['#f5d78e', '#e8a0a0', '#b76e79'] },
+  ];
+
+  function createHeartSVG(size, gradientId) {
+    const grad = heartGradients.find(g => g.id === gradientId) || heartGradients[0];
+    return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hg-${grad.id}-${Date.now()}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${grad.stops[0]}"/>
+          <stop offset="50%" stop-color="${grad.stops[1]}"/>
+          <stop offset="100%" stop-color="${grad.stops[2]}"/>
+        </linearGradient>
+      </defs>
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+        fill="url(#hg-${grad.id}-${Date.now()})" opacity="0.9"/>
+    </svg>`;
+  }
+
   function spawnHeart(x, y) {
     const heart = document.createElement('div');
-    heart.classList.add('floating-heart');
-    heart.textContent = '❤️';
+    heart.classList.add('svg-heart');
+    const size = rand(16, 38);
+    const gradTypes = ['rose', 'gold', 'pink', 'blush', 'sunset'];
+    const gradId = gradTypes[Math.floor(rand(0, gradTypes.length))];
+    heart.innerHTML = createHeartSVG(size, gradId);
+
+    // Random glow class
+    if (Math.random() > 0.5) heart.classList.add(Math.random() > 0.5 ? 'glow-rose' : 'glow-gold');
+
     heart.style.left = x + 'px';
-    heart.style.top  = y + 'px';
-    heart.style.fontSize = rand(1, 2.5) + 'rem';
+    heart.style.top = y + 'px';
     document.body.appendChild(heart);
 
     let start = null;
-    const dur = rand(3, 6);
-    const drift = rand(-40, 40);
+    const dur = rand(3, 7);
+    const drift = rand(-50, 50);
+    const rotSpeed = rand(-90, 90);
+    const riseHeight = rand(250, 450);
+
     function rise(ts) {
       if (!start) start = ts;
       const elapsed = (ts - start) / 1000;
       const progress = elapsed / dur;
       if (progress >= 1) { heart.remove(); return; }
-      heart.style.transform = `translate(${Math.sin(elapsed) * drift}px, ${-progress * 300}px)`;
-      heart.style.opacity = (1 - progress) * 0.7;
+
+      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const yMove = -eased * riseHeight;
+      const xMove = Math.sin(elapsed * 1.5) * drift;
+      const rot = elapsed * rotSpeed;
+      const scale = 1 - progress * 0.3;
+
+      heart.style.transform = `translate(${xMove}px, ${yMove}px) rotate(${rot}deg) scale(${scale})`;
+      heart.style.opacity = (1 - Math.pow(progress, 2)) * 0.85;
       requestAnimationFrame(rise);
     }
     requestAnimationFrame(rise);
   }
 
+  // Spawn a burst of hearts (used for gift/CTA)
+  function heartBurst(cx, cy, count) {
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        spawnHeart(cx + rand(-100, 100), cy + rand(-80, 80));
+      }, i * 60);
+    }
+  }
+
   function startHearts() {
     setInterval(() => {
       spawnHeart(rand(50, window.innerWidth - 50), rand(100, window.innerHeight));
-    }, 2500);
+    }, 2000);
+  }
+
+  /* ==========================================================
+     5b. SPARKLE SYSTEM
+     ========================================================== */
+  function spawnSparkle(x, y) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('sparkle');
+    sparkle.style.left = x + 'px';
+    sparkle.style.top = y + 'px';
+    const size = rand(2, 5);
+    sparkle.style.width = size + 'px';
+    sparkle.style.height = size + 'px';
+    document.body.appendChild(sparkle);
+
+    let start = null;
+    const dur = rand(1.5, 3);
+    function fade(ts) {
+      if (!start) start = ts;
+      const progress = ((ts - start) / 1000) / dur;
+      if (progress >= 1) { sparkle.remove(); return; }
+      const scale = Math.sin(progress * Math.PI);
+      sparkle.style.transform = `scale(${scale}) translateY(${-progress * 40}px)`;
+      sparkle.style.opacity = scale * 0.8;
+      requestAnimationFrame(fade);
+    }
+    requestAnimationFrame(fade);
+  }
+
+  function startSparkles() {
+    setInterval(() => {
+      spawnSparkle(rand(0, window.innerWidth), rand(0, window.innerHeight));
+    }, 800);
+  }
+
+  /* ==========================================================
+     5c. MOUSE TRAIL HEARTS
+     ========================================================== */
+  let lastMouseHeart = 0;
+  function initMouseTrailHearts() {
+    document.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastMouseHeart > 400) {
+        lastMouseHeart = now;
+        if (Math.random() > 0.6) {
+          spawnHeart(e.clientX + rand(-20, 20), e.clientY + rand(-10, 10));
+        }
+      }
+    });
+  }
+
+  /* ==========================================================
+     5d. FLOATING LANTERNS (for finale)
+     ========================================================== */
+  function initFinalieLanterns() {
+    const finale = document.getElementById('finale');
+    if (!finale) return;
+
+    function createLantern() {
+      const lantern = document.createElement('div');
+      lantern.classList.add('lantern');
+      lantern.style.left = rand(5, 95) + '%';
+      lantern.style.bottom = '-30px';
+      const size = rand(10, 20);
+      lantern.style.width = size + 'px';
+      lantern.style.height = (size * 1.3) + 'px';
+      finale.appendChild(lantern);
+
+      let start = null;
+      const dur = rand(10, 20);
+      const sway = rand(-30, 30);
+
+      function fly(ts) {
+        if (!start) start = ts;
+        const progress = ((ts - start) / 1000) / dur;
+        if (progress >= 1) { lantern.remove(); return; }
+        const y = -progress * finale.offsetHeight * 1.2;
+        const x = Math.sin(progress * Math.PI * 2) * sway;
+        lantern.style.transform = `translate(${x}px, ${y}px)`;
+        lantern.style.opacity = Math.sin(progress * Math.PI) * 0.7;
+        requestAnimationFrame(fly);
+      }
+      requestAnimationFrame(fly);
+    }
+
+    // Start lanterns when finale is visible
+    const obs = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        for (let i = 0; i < 5; i++) setTimeout(() => createLantern(), i * 1500);
+        setInterval(() => createLantern(), 3000);
+        obs.unobserve(finale);
+      }
+    }, { threshold: 0.2 });
+    obs.observe(finale);
   }
 
   /* ==========================================================
@@ -232,15 +374,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Burst hearts around hero
     setTimeout(() => {
-      for (let i = 0; i < 8; i++) {
-        setTimeout(() => {
-          const rect = frame.getBoundingClientRect();
-          spawnHeart(
-            rect.left + rand(0, rect.width),
-            rect.top + rand(0, rect.height)
-          );
-        }, i * 300);
-      }
+      const rect = frame.getBoundingClientRect();
+      heartBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 12);
     }, 2000);
   }
 
@@ -315,15 +450,18 @@ document.addEventListener('DOMContentLoaded', () => {
       wrapper.classList.add('opened');
       hint.style.opacity = '0';
 
-      // Particle burst
-      for (let i = 0; i < 30; i++) {
+      // Big heart burst from the gift
+      const rect = wrapper.getBoundingClientRect();
+      heartBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 40);
+
+      // Sparkle burst
+      for (let i = 0; i < 15; i++) {
         setTimeout(() => {
-          const rect = wrapper.getBoundingClientRect();
-          spawnHeart(
-            rect.left + rect.width / 2 + rand(-80, 80),
-            rect.top + rand(-60, 60)
+          spawnSparkle(
+            rect.left + rect.width / 2 + rand(-100, 100),
+            rect.top + rect.height / 2 + rand(-80, 80)
           );
-        }, i * 80);
+        }, i * 100);
       }
 
       // Show reveal
@@ -389,14 +527,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (revealed) return;
       revealed = true;
 
-      // Hearts burst
+      // Massive heart burst
+      heartBurst(window.innerWidth / 2, window.innerHeight / 2, 30);
+
+      // Sparkle shower
       for (let i = 0; i < 20; i++) {
         setTimeout(() => {
-          spawnHeart(
-            rand(100, window.innerWidth - 100),
-            rand(window.innerHeight * 0.3, window.innerHeight * 0.7)
-          );
-        }, i * 120);
+          spawnSparkle(rand(100, window.innerWidth - 100), rand(100, window.innerHeight - 100));
+        }, i * 100);
       }
 
       btn.style.transition = 'opacity 1s ease, transform 1s ease';
@@ -435,12 +573,15 @@ document.addEventListener('DOMContentLoaded', () => {
     startBalloons();
     startPetals();
     startHearts();
+    startSparkles();
     animateHero();
     initScrollReveals();
     initGift();
     initQuotes();
     initCTA();
     initParallax();
+    initMouseTrailHearts();
+    initFinalieLanterns();
   }
 
 });

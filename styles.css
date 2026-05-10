@@ -652,7 +652,59 @@ body {
   line-height: 2;
 }
 
-/* ===== FLOATING HEARTS ===== */
+/* ===== ADVANCED SVG HEARTS ===== */
+.svg-heart {
+  position: fixed;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(183, 110, 121, 0.5));
+}
+
+.svg-heart.glow-rose {
+  filter: drop-shadow(0 0 10px rgba(183, 110, 121, 0.6)) drop-shadow(0 0 20px rgba(183, 110, 121, 0.3));
+}
+
+.svg-heart.glow-gold {
+  filter: drop-shadow(0 0 10px rgba(212, 168, 85, 0.6)) drop-shadow(0 0 20px rgba(245, 215, 142, 0.3));
+}
+
+/* ===== SPARKLE EFFECT ===== */
+.sparkle {
+  position: fixed;
+  z-index: 2;
+  pointer-events: none;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--golden-glow);
+  box-shadow: 0 0 6px var(--golden-glow), 0 0 12px var(--golden);
+}
+
+.sparkle::before,
+.sparkle::after {
+  content: '';
+  position: absolute;
+  background: inherit;
+  border-radius: 50%;
+}
+
+.sparkle::before {
+  width: 100%;
+  height: 100%;
+  top: -8px;
+  left: 0;
+  transform: scale(0.5);
+}
+
+.sparkle::after {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: -8px;
+  transform: scale(0.3);
+}
+
+/* ===== FLOATING HEARTS (kept for backward compat) ===== */
 .floating-heart {
   position: fixed;
   z-index: 2;
@@ -672,6 +724,70 @@ body {
   border-radius: 50% 0 50% 50%;
   opacity: 0.4;
   filter: blur(0.5px);
+}
+
+/* ===== ENHANCED IMAGE HOVER ===== */
+.memory-card img {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease;
+}
+
+.memory-card:hover img {
+  transform: scale(1.04);
+  filter: saturate(1) brightness(1.08);
+}
+
+.gift-reveal-photos img {
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.gift-reveal-photos img:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 16px 40px rgba(139, 69, 87, 0.25), 0 0 30px rgba(212, 168, 85, 0.1);
+}
+
+/* ===== HERO FRAME GLOW RING ===== */
+.hero-frame::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--golden-glow), var(--rose-gold), var(--golden-glow));
+  background-size: 300% 300%;
+  z-index: -1;
+  animation: hero-glow 6s ease-in-out infinite;
+  opacity: 0.5;
+}
+
+@keyframes hero-glow {
+  0%, 100% { background-position: 0% 50%; opacity: 0.3; }
+  50% { background-position: 100% 50%; opacity: 0.6; }
+}
+
+/* ===== SECTION DIVIDERS ===== */
+.section-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--rose-gold), var(--golden), var(--rose-gold), transparent);
+  margin: 0 auto 2rem;
+  border: none;
+  opacity: 0.6;
+}
+
+/* ===== QUOTE GLOW ===== */
+.quote-item.active {
+  text-shadow: 0 0 40px rgba(139, 69, 87, 0.08);
+}
+
+/* ===== FINALE FLOATING LANTERNS ===== */
+.lantern {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  width: 16px;
+  height: 22px;
+  background: radial-gradient(circle at center, rgba(245, 215, 142, 0.9), rgba(212, 168, 85, 0.5));
+  border-radius: 40% 40% 50% 50%;
+  box-shadow: 0 0 15px rgba(245, 215, 142, 0.6), 0 0 30px rgba(212, 168, 85, 0.3);
 }
 
 /* ===== RESPONSIVE ===== */

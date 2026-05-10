@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A heartfelt, cinematic Mother's Day tribute — for Maa, with love.">
+  <title>Happy Mother's Day, Maa ❤️</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== OPENING SCENE ===== -->
+  <div id="opening-scene">
+    <p class="opening-text">For the woman who gave me everything<br>without asking for anything.</p>
+    <button class="opening-enter" id="enter-btn">Enter with Love ❤️</button>
+  </div>
+
+  <!-- ===== PARTICLES ===== -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- ===== BALLOONS ===== -->
+  <div class="balloon-container" id="balloon-container"></div>
+
+  <!-- ===== HERO ===== -->
+  <section id="hero">
+    <div class="hero-frame" id="hero-frame">
+      <img src="maa_hero.jpg" alt="Maa — the most beautiful soul">
+    </div>
+    <h1 class="hero-title" id="hero-title">Happy Mother's Day, Maa ❤️</h1>
+    <p class="hero-subtitle" id="hero-subtitle">You are my world, my strength, my everything</p>
+  </section>
+
+  <!-- ===== MEMORIES ===== -->
+  <section id="memories">
+    <h2 class="memories-heading">Our Beautiful Memories</h2>
+    <div class="memory-timeline">
+
+      <div class="memory-card">
+        <img src="family.jpg" alt="Our family together">
+        <span class="memory-label">Family</span>
+        <h3>Our Pillars of Strength</h3>
+        <p>Every step I took, your hand was there to guide me. You made every ordinary moment feel magical and safe. Together, we are unstoppable.</p>
+      </div>
+
+      <div class="memory-card">
+        <img src="ghat_trip.jpg" alt="At Dashashvamedh Ghat with family">
+        <span class="memory-label">Sacred Journeys</span>
+        <h3>Blessings at Kashi</h3>
+        <p>Walking with you at Dashashvamedh Ghat, seeking blessings together — these spiritual moments with you are etched in my heart forever.</p>
+      </div>
+
+      <div class="memory-card">
+        <img src="maa_blessing.jpg" alt="Maa's blessing">
+        <span class="memory-label">Your Blessings</span>
+        <h3>A Mother's Touch</h3>
+        <p>Your hands on my head, your blessings in my heart — nothing in this world compares to the warmth of your love and care.</p>
+      </div>
+
+      <div class="memory-card">
+        <img src="celebration.jpg" alt="Celebration together">
+        <span class="memory-label">Celebrations</span>
+        <h3>Every Joy, With You</h3>
+        <p>You gave up so many dreams so I could chase mine. Every celebration feels complete only when you're beside me. Thank you, Maa.</p>
+      </div>
+
+      <div class="memory-card">
+        <img src="temple_selfie.jpg" alt="Temple visit with Maa">
+        <span class="memory-label">Adventures</span>
+        <h3>Together Everywhere</h3>
+        <p>From temple visits to tiny adventures — every journey with you becomes a pilgrimage of love and laughter.</p>
+      </div>
+
+      <div class="memory-card">
+        <img src="maa_ganga.jpg" alt="Maa at the holy river">
+        <span class="memory-label">Faith & Devotion</span>
+        <h3>Your Prayers, My Shield</h3>
+        <p>Watching you pray by the sacred river, I realized — it's your faith that has always protected me. Your devotion is my greatest blessing.</p>
+      </div>
+
+      <div class="memory-card">
+        <img src="maa_with_son.jpg" alt="Maa with Bhaiya">
+        <span class="memory-label">Bond of a Lifetime</span>
+        <h3>A Brother's Love for Maa</h3>
+        <p>Bhaiya standing beside you says it all — you raised sons who will always stand by you. Your love made us a family that nothing can break.</p>
+      </div>
+
+      <div class="memory-card">
+        <img src="maa_solo.jpg" alt="Maa's beautiful smile">
+        <span class="memory-label">A Note From the Heart</span>
+        <h3>You Are My Hero</h3>
+        <p>In a world full of superheroes, you're the one who never wears a cape but saves me every single day. I love you endlessly.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== GIFT SECTION ===== -->
+  <section id="gift">
+    <h2 class="gift-heading">A Little Gift For You</h2>
+    <div class="gift-box-wrapper" id="gift-box-wrapper">
+      <div class="gift-glow"></div>
+      <div class="gift-box">
+        <div class="gift-lid" id="gift-lid"></div>
+        <div class="gift-body"></div>
+      </div>
+    </div>
+    <p style="font-family:'Cormorant Garamond',serif; color:var(--text-soft); margin-top:1.5rem; font-style:italic; opacity:0.7;" id="gift-hint">Click to open your gift ✨</p>
+
+    <div class="gift-reveal" id="gift-reveal">
+      <p class="gift-reveal-message">Maa, you are the most precious gift life ever gave me. This little surprise is just a tiny way of saying — I see you, I appreciate you, and I love you more than words can ever say.</p>
+      <div class="gift-reveal-photos">
+        <img src="maa_hero.jpg" alt="Maa">
+        <img src="family.jpg" alt="Our family">
+        <img src="maa_with_son.jpg" alt="With Maa">
+        <img src="maa_blessing.jpg" alt="Maa's love">
+      </div>
+      <h2 class="love-text" id="love-text">I Love You, Maa ❤️</h2>
+    </div>
+  </section>
+
+  <!-- ===== QUOTES ===== -->
+  <section id="quotes">
+    <div class="quotes-container" id="quotes-container">
+      <p class="quote-item active" data-index="0">Home is wherever Maa smiles.</p>
+      <p class="quote-item" data-index="1">Her love built the person I became.</p>
+      <p class="quote-item" data-index="2">Every success of mine has your sacrifice behind it.</p>
+      <p class="quote-item" data-index="3">A mother's love is the fuel that enables a normal human being to do the impossible.</p>
+      <p class="quote-item" data-index="4">She held my hand when the world let go.</p>
+    </div>
+    <div class="quote-dots" id="quote-dots">
+      <span class="quote-dot active" data-index="0"></span>
+      <span class="quote-dot" data-index="1"></span>
+      <span class="quote-dot" data-index="2"></span>
+      <span class="quote-dot" data-index="3"></span>
+      <span class="quote-dot" data-index="4"></span>
+    </div>
+  </section>
+
+  <!-- ===== FINALE ===== -->
+  <section id="finale">
+    <div class="finale-bg">
+      <img src="lantern_sky.png" alt="Lanterns rising into the sky">
+    </div>
+    <p class="finale-text" id="finale-text">You are my first home, my forever strength, my Maa.</p>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section id="cta">
+    <button class="cta-button" id="cta-button">Open My Heart ❤️</button>
+    <div class="final-note" id="final-note">
+      <p>Dear Maa,<br><br>
+      If I could give you one thing in life, I would give you the ability to see yourself through my eyes. Only then would you realize how special you are to me.<br><br>
+      You held me before I could stand. You believed in me before I believed in myself. You loved me when I forgot to love myself.<br><br>
+      Every beat of my heart whispers your name. Every good thing I am, is because of you.<br><br>
+      Today and every day — I celebrate you. I honor you. I love you.<br><br>
+      Forever yours,<br>
+      Your Shikhar(Heera Lal) & Ujjwal(Panna Lal) ❤️</p>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

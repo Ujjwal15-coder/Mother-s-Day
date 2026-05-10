@@ -565,23 +565,214 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================
+     12. HEART RAIN CANVAS (subtle falling hearts)
+     ========================================================== */
+  const heartCanvas = document.getElementById('heart-rain-canvas');
+  const hCtx = heartCanvas ? heartCanvas.getContext('2d') : null;
+  let fallingHearts = [];
+
+  function resizeHeartCanvas() {
+    if (!heartCanvas) return;
+    heartCanvas.width = window.innerWidth;
+    heartCanvas.height = window.innerHeight;
+  }
+  resizeHeartCanvas();
+  window.addEventListener('resize', resizeHeartCanvas);
+
+  function drawHeart(ctx, x, y, size, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    const topCurveHeight = size * 0.3;
+    ctx.moveTo(x, y + topCurveHeight);
+    // left curve
+    ctx.bezierCurveTo(x, y, x - size / 2, y, x - size / 2, y + topCurveHeight);
+    ctx.bezierCurveTo(x - size / 2, y + (size + topCurveHeight) / 2, x, y + (size + topCurveHeight) / 1.2, x, y + size);
+    // right curve
+    ctx.bezierCurveTo(x, y + (size + topCurveHeight) / 1.2, x + size / 2, y + (size + topCurveHeight) / 2, x + size / 2, y + topCurveHeight);
+    ctx.bezierCurveTo(x + size / 2, y, x, y, x, y + topCurveHeight);
+    ctx.closePath();
+    ctx.fill();
+
+    // glow
+    ctx.shadowColor = color;
+    ctx.shadowBlur = size * 0.8;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const heartColors = ['#e88ca5', '#d4a0a7', '#f5d78e', '#f2d1d1', '#b76e79'];
+
+  class FallingHeart {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = rand(0, heartCanvas.width);
+      this.y = init ? rand(-heartCanvas.height, 0) : -20;
+      this.size = rand(6, 16);
+      this.speed = rand(0.3, 1.2);
+      this.drift = rand(-0.3, 0.3);
+      this.rotation = rand(0, Math.PI * 2);
+      this.rotSpeed = rand(-0.02, 0.02);
+      this.alpha = rand(0.08, 0.25);
+      this.color = heartColors[Math.floor(rand(0, heartColors.length))];
+    }
+    update() {
+      this.y += this.speed;
+      this.x += this.drift + Math.sin(this.y * 0.01) * 0.3;
+      this.rotation += this.rotSpeed;
+      if (this.y > heartCanvas.height + 20) this.reset(false);
+    }
+    draw() {
+      hCtx.save();
+      hCtx.translate(this.x, this.y);
+      hCtx.rotate(this.rotation);
+      drawHeart(hCtx, 0, 0, this.size, this.color, this.alpha);
+      hCtx.restore();
+    }
+  }
+
+  function initHeartRain() {
+    if (!hCtx) return;
+    const count = Math.min(25, Math.floor(window.innerWidth / 60));
+    for (let i = 0; i < count; i++) fallingHearts.push(new FallingHeart());
+  }
+
+  function animateHeartRain() {
+    if (!hCtx) return;
+    hCtx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
+    fallingHearts.forEach(h => { h.update(); h.draw(); });
+    requestAnimationFrame(animateHeartRain);
+  }
+
+  /* ==========================================================
+     13. CURSOR GLOW TRACKER
+     ========================================================== */
+  function initCursorGlow() {
+    const glow = document.getElementById('cursor-glow');
+    if (!glow) return;
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+  }
+
+  /* ==========================================================
+     14. FLOATING LOVE WORDS
+     ========================================================== */
+  const loveWords = ['Love', 'Maa ❤️', 'Forever', 'Gratitude', 'Blessing', 'Strength', 'Home', 'Heart', 'प्यार', 'माँ'];
+
+  function spawnLoveWord() {
+    const word = document.createElement('div');
+    word.classList.add('love-word');
+    word.textContent = loveWords[Math.floor(rand(0, loveWords.length))];
+    word.style.left = rand(5, 90) + '%';
+    word.style.top = rand(20, 80) + '%';
+    word.style.fontSize = rand(0.8, 1.6) + 'rem';
+    document.body.appendChild(word);
+
+    let start = null;
+    const dur = rand(5, 10);
+    function animate(ts) {
+      if (!start) start = ts;
+      const progress = ((ts - start) / 1000) / dur;
+      if (progress >= 1) { word.remove(); return; }
+      const fadeIn = Math.min(progress * 5, 1);
+      const fadeOut = Math.max(1 - (progress - 0.7) * 3.33, 0);
+      word.style.opacity = Math.min(fadeIn, fadeOut) * 0.2;
+      word.style.transform = `translateY(${-progress * 60}px)`;
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+  }
+
+  function startLoveWords() {
+    setInterval(() => spawnLoveWord(), 4000);
+  }
+
+  /* ==========================================================
+     15. OPENING SCENE HEARTS
+     ========================================================== */
+  function addOpeningHearts() {
+    const scene = document.getElementById('opening-scene');
+    if (!scene) return;
+    for (let i = 0; i < 8; i++) {
+      const heart = document.createElement('div');
+      heart.classList.add('opening-heart');
+      const size = rand(20, 50);
+      heart.innerHTML = createHeartSVG(size, ['rose', 'gold', 'blush'][Math.floor(rand(0, 3))]);
+      heart.style.left = rand(5, 95) + '%';
+      heart.style.top = rand(10, 90) + '%';
+      heart.style.opacity = rand(0.05, 0.15);
+      heart.style.transform = `rotate(${rand(-30, 30)}deg)`;
+      scene.appendChild(heart);
+
+      // Gentle float animation
+      let start = null;
+      const drift = rand(-15, 15);
+      function floatHeart(ts) {
+        if (!start) start = ts;
+        const elapsed = (ts - start) / 1000;
+        if (!document.body.contains(heart)) return;
+        heart.style.transform = `rotate(${rand(-30, 30)}deg) translateY(${Math.sin(elapsed * 0.5) * drift}px)`;
+        requestAnimationFrame(floatHeart);
+      }
+      requestAnimationFrame(floatHeart);
+    }
+  }
+
+  /* ==========================================================
+     16. HEARTBEAT PULSE ON HERO
+     ========================================================== */
+  function initHeartbeat() {
+    const frame = document.getElementById('hero-frame');
+    if (!frame) return;
+    // Add heartbeat after the reveal animation completes
+    setTimeout(() => {
+      frame.classList.add('heartbeat');
+    }, 4000);
+  }
+
+  /* ==========================================================
+     17. MEMORY CARD HEART BADGES
+     ========================================================== */
+  function addCardHearts() {
+    const cards = document.querySelectorAll('.memory-card');
+    cards.forEach(card => {
+      const heartBadge = document.createElement('div');
+      heartBadge.classList.add('card-heart');
+      heartBadge.innerHTML = createHeartSVG(24, 'rose');
+      card.appendChild(heartBadge);
+    });
+  }
+
+  /* ==========================================================
      START EXPERIENCE
      ========================================================== */
   function startExperience() {
     initParticles();
     animateParticles();
+    initHeartRain();
+    animateHeartRain();
     startBalloons();
     startPetals();
     startHearts();
     startSparkles();
+    startLoveWords();
     animateHero();
+    initHeartbeat();
     initScrollReveals();
     initGift();
     initQuotes();
     initCTA();
     initParallax();
+    initCursorGlow();
     initMouseTrailHearts();
     initFinalieLanterns();
+    addCardHearts();
   }
+
+  // Start opening scene hearts immediately
+  addOpeningHearts();
 
 });

@@ -772,7 +772,4 @@ document.addEventListener('DOMContentLoaded', () => {
     addCardHearts();
   }
 
-  // Start opening scene hearts immediately
-  addOpeningHearts();
-
 });
